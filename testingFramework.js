@@ -1,12 +1,21 @@
-function isDivisible(dividend, divisor) {
-    return dividend % divisor === 0;
+function updateString(replacedStr, nextChar) {
+    return replacedStr + nextChar;
 }
 
-function isLeapYear(year) {
-    if (isDivisible(year, 400)) {
-        return true;
+function matchFound(text, index, match) {
+    return text[index] === match;
+}
+
+function replace(text, match, replacement) {
+    let replacedStr = '';
+    for (let index = 0; index < text.length; index++) {
+        if (matchFound(text, index, match)) {
+            replacedStr = updateString(replacedStr, replacement);
+            continue;
+        }
+        replacedStr = updateString(replacedStr, text[index]);
     }
-    return !isDivisible(year, 100) && isDivisible(year, 4);
+    return replacedStr;
 }
 
 function mark(outcome) {
@@ -19,7 +28,7 @@ function printMessage(message) {
 
 function createHeading() {
     let topLine = '┏';
-    for (let i = 1; i < 52; i++) {
+    for (let i = 1; i < 13 * 6; i++) {
         if (i % 13 === 0) {
             topLine = topLine + '┳';
             continue;
@@ -27,10 +36,16 @@ function createHeading() {
         topLine = topLine + '━';
     }
     console.log(topLine + '┓');
-    const heading = '┃ ' + '  status  ' + ' ┃ ' + '  number  ' + ' ┃ ' + ' expected ' + ' ┃ ' + '  actual  ' + ' ┃';
+    let heading = '┃  ';
+    heading += ' status ' + '  ┃  ';
+    heading += '  text  ' + '  ┃  ';
+    heading += '  match  ' + ' ┃';
+    heading += 'replacement' + ' ┃ ';
+    heading += ' expected ' + ' ┃ ';
+    heading += '  actual  ' + ' ┃';
     console.log(heading);
     let lineAfterHeading = '┣';
-    for (let i = 1; i < 52; i++) {
+    for (let i = 1; i < 13 * 6; i++) {
         if (i % 13 === 0) {
             lineAfterHeading = lineAfterHeading + '╋';
             continue;
@@ -40,9 +55,9 @@ function createHeading() {
     console.log(lineAfterHeading + '┫');
 }
 
-function createBottom() {   
+function createBottom() {
     let lineAtBottom = '┗';
-    for (let i = 1; i < 52; i++) {
+    for (let i = 1; i < 13 * 6; i++) {
         if (i % 13 === 0) {
             lineAtBottom = lineAtBottom + '┻';
             continue;
@@ -60,12 +75,16 @@ function gapsForMessage(parameter) {
     return gap;
 }
 
-function createDataForCells(year, expected, actual) {
+function createDataForCells(text, match, replacement, expected, actual) {
     let data = '';
-    data += '┃' + mark(actual == expected);
-    data += gapsForMessage(mark(actual == expected));
-    data += '┃ ' + year;
-    data += gapsForMessage(year);
+    data += '┃' + mark(actual === expected);
+    data += gapsForMessage(mark(actual === expected));
+    data += '┃ ' + text;
+    data += gapsForMessage(text);
+    data += '┃ ' + match;
+    data += gapsForMessage(match);
+    data += '┃ ' + replacement;
+    data += gapsForMessage(replacement);
     data += '┃ ' + expected;
     data += gapsForMessage(expected);
     data += '┃ ' + actual;
@@ -74,26 +93,23 @@ function createDataForCells(year, expected, actual) {
     printMessage(data);
 }
 
-function testIsLeap(year, expected) {
-    const actual = isLeapYear(year);
-    gapsForMessage(year, expected, actual);
-    createDataForCells(year, expected, actual);
+function testStringReplace(text, match, replacement, expected) {
+    const actual = replace(text, match, replacement);
+    createDataForCells(text, match, replacement, expected, actual);
 }
 
 function testAll() {
     createHeading();
-    testIsLeap(1, false);
-    testIsLeap(4, true);
-    testIsLeap(100, false);
-    testIsLeap(400, true);
-    testIsLeap(2, false);
-    testIsLeap(3, false);
-    testIsLeap(200, false);
-    testIsLeap(300, false);
-    testIsLeap(1900, false);
-    testIsLeap(1920, true);
-    testIsLeap(2000, true);
-    testIsLeap(2024, true);
+    testStringReplace('a', 'a', 'b', 'b');
+    testStringReplace('b', 'b', 'b', 'b');
+    testStringReplace('a', 'b', 'c', 'a');
+    testStringReplace('aabb', 'b', 'c', 'aacc');
+    testStringReplace('aabb', 'a', 'c', 'ccbb');
+    testStringReplace('aabb', 'c', 'z', 'aabb');
+    testStringReplace('abc', 'b', 'x', 'axc');
+    testStringReplace('hello world', 'l', 'n', 'henno wornd');
+    testStringReplace('no spaces ', ' ', '_', 'no_spaces_');
+    testStringReplace('', 'd', 'e', '');
     createBottom();
 }
 testAll();
