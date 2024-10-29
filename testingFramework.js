@@ -1,16 +1,12 @@
-function isFizzBuzz(number) {
-    let statusOfNum = '';
-    if (number % 3 === 0) {
-        statusOfNum += 'fizz';
-    }
-    if (number % 5 === 0) {
-        statusOfNum += 'buzz';
-    }
-    const numberJudgement = statusOfNum === '' ? '' + number : statusOfNum;
-    return numberJudgement;
+function isDivisible(dividend, divisor) {
+    return dividend % divisor === 0;
 }
-function fizzBuzz(number) {
-    return isFizzBuzz(number);
+
+function isLeapYear(year) {
+    if (isDivisible(year, 400)) {
+        return true;
+    }
+    return !isDivisible(year, 100) && isDivisible(year, 4);
 }
 
 function mark(outcome) {
@@ -23,85 +19,81 @@ function printMessage(message) {
 
 function createHeading() {
     let topLine = '┏';
-    for (let i = 0; i < 52; i++) {
+    for (let i = 1; i < 52; i++) {
+        if (i % 13 === 0) {
+            topLine = topLine + '┳';
+            continue;
+        }
         topLine = topLine + '━';
     }
     console.log(topLine + '┓');
-    const heading = '┃ ' + '  status  ' + '  ┃ ' + ' number  ' + '  ┃ ' + 'expected ' + '  ┃ ' + ' actual  ' + '  ┃';
+    const heading = '┃ ' + '  status  ' + ' ┃ ' + '  number  ' + ' ┃ ' + ' expected ' + ' ┃ ' + '  actual  ' + ' ┃';
     console.log(heading);
-    let lineAfterHeading = '┗';
-    for (let i = 0; i < 52; i++) {
+    let lineAfterHeading = '┣';
+    for (let i = 1; i < 52; i++) {
+        if (i % 13 === 0) {
+            lineAfterHeading = lineAfterHeading + '╋';
+            continue;
+        }
         lineAfterHeading = lineAfterHeading + '━';
     }
-    console.log(lineAfterHeading + '┛');
+    console.log(lineAfterHeading + '┫');
 }
 
-function createBottom() {
+function createBottom() {   
     let lineAtBottom = '┗';
-    for (let i = 0; i < 52; i++) {
+    for (let i = 1; i < 52; i++) {
+        if (i % 13 === 0) {
+            lineAtBottom = lineAtBottom + '┻';
+            continue;
+        }
         lineAtBottom = lineAtBottom + '━';
     }
     console.log(lineAtBottom + '┛');
 }
 function gapsForMessage(parameter) {
-    // let firstGap = '';
-    // for (let i = 0; i < 6; i++) {
-    //     firstGap = firstGap + ' ';
-    // }
-    // let secondGap = '';
-    // const parameter1 = '' + number
-    // for (let i = 0; i < 8 - parameter1.length; i++) {
-    //     secondGap = secondGap + ' ';
-    // }
-    // let thirdGap = '';
-    // const parameter2 = '' + expected;
-    // for (let i = 0; i < 10 - parameter2.length; i++) {
-    //     thirdGap = thirdGap + ' ';
-    // }
-    // let fourthGap = '';
-    // const parameter3 = '' + actual;
-    // for (let i = 0; i < 8 - parameter3.length; i++) {
-    //     fourthGap = fourthGap + ' ';
-    // }
-    // printMessage(firstGap, secondGap, thirdGap, fourthGap, number, expected, actual);
     let gap = '';
     parameter = parameter + '';
-    for (let iterator = 0; iterator < 12 - parameter.length; iterator++) {
+    for (let iterator = 1; iterator < 12 - parameter.length; iterator++) {
         gap = gap + ' ';
     }
     return gap;
 }
 
-function createDataForCells(number, expected, actual) {
-    let data  = '';
+function createDataForCells(year, expected, actual) {
+    let data = '';
     data += '┃' + mark(actual == expected);
     data += gapsForMessage(mark(actual == expected));
-    data += '┃' + number;
-    data += gapsForMessage(number);
-    data += '┃' + expected;
+    data += '┃ ' + year;
+    data += gapsForMessage(year);
+    data += '┃ ' + expected;
     data += gapsForMessage(expected);
-    data += '┃' + actual;
+    data += '┃ ' + actual;
     data += gapsForMessage(actual);
-    data += '┃';
+    data += '┃ ';
     printMessage(data);
 }
 
-function testEndsWith(number, expected) {
-    const actual = fizzBuzz(number);
-    gapsForMessage(number, expected, actual);
-    createDataForCells(number, expected, actual);
-}
-function testAll() {
-    createHeading();
-    testEndsWith(0, 'fizzbuzz');
-    testEndsWith(1, '1');
-    testEndsWith(2, '2');
-    testEndsWith(3, 'fizz');
-    testEndsWith(4, '4');
-    testEndsWith(5, 'buzz');
-    testEndsWith(15, 'fizzbuzz');
-    testEndsWith(30, 'fizzbuzz');
-    createBottom();
+function testIsLeap(year, expected) {
+    const actual = isLeapYear(year);
+    gapsForMessage(year, expected, actual);
+    createDataForCells(year, expected, actual);
 }
 
+function testAll() {
+    createHeading();
+    testIsLeap(1, false);
+    testIsLeap(4, true);
+    testIsLeap(100, false);
+    testIsLeap(400, true);
+    testIsLeap(2, false);
+    testIsLeap(3, false);
+    testIsLeap(200, false);
+    testIsLeap(300, false);
+    testIsLeap(1900, false);
+    testIsLeap(1920, true);
+    testIsLeap(2000, true);
+    testIsLeap(2024, true);
+    createBottom();
+}
 testAll();
