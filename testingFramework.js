@@ -11,6 +11,7 @@ const replace = function (text, match, replacement) {
 const DASH = '━';
 const BAR = '┃';
 const SPACE = ' ';
+const EDGES = [['┏', '┓'], ['┣', '┫'], ['┗', '┛']];
 const COLUMN_SIZE = 20;
 
 function getMark(outcome) {
@@ -31,17 +32,16 @@ const getLine = function (length) {
 
 const tableHead = function (...categories) {
   const content = BAR + categories.map(putContents).join('');
-  const edges = [['┏', '┓'], ['┣', '┫']];
-  const line = getLine(content.length - edges[0].length);
+  const line = getLine(content.length - EDGES[0].length);
 
-  const topLine = edges[0][0] + line + edges[0][1];
-  const bottomLine = edges[1][0] + line + edges[1][1];
+  const topLine = EDGES[0][0] + line + EDGES[0][1];
+  const bottomLine = EDGES[1][0] + line + EDGES[1][1];
 
   return topLine + '\n' + content + '\n' + bottomLine;
 }
 
 const tableFoot = function (length) {
-  return '┗' + getLine(length) + '┛';
+  return EDGES[2][0] + getLine(length) + EDGES[2][1];
 }
 
 function tableBody(...elements) {
