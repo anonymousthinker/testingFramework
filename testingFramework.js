@@ -29,18 +29,18 @@ const tableHead = function (...categories) {
   return topLine + '\n' + content + '\n' + bottomLine;
 }
 
-const tableFoot = function (length) {
-  return '┗' + getLine(length) + '┛';
+function tableBody(...elements) {
+  return '┃' + elements.map(columnGap).join('') + '┃';
 }
 
-function createCells(...elements) {
-  return '┃' + elements.map(columnGap).join('') + '┃';
+const tableFoot = function (length) {
+  return '┗' + getLine(length) + '┛';
 }
 
 function testStringReplace(text, match, replacement, expected) {
   const actual = replace(text, match, replacement);
   const mark = getMark(actual === expected);
-  console.log(createCells(mark, text, match, replacement, expected, actual));
+  console.log(tableBody(mark, text, match, replacement, expected, actual));
 }
 
 function testAll() {
