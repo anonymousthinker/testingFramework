@@ -13,7 +13,8 @@ function getMark(outcome) {
 }
 
 const columnGap = function (element) {
-  return element + ' '.repeat(20 - element.length);
+  const category = element.toString();
+  return category + ' '.repeat(20 - category.length);
 }
 
 const getLine = function (length) {
