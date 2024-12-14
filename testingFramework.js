@@ -1,115 +1,66 @@
-function updateString(replacedStr, nextChar) {
-    return replacedStr + nextChar;
+const replace = function (text, match, replacement) {
+  const arr = Array.from(text);
+
+  const find = function (char) {
+    return char === match ? replacement : char;
+  }
+
+  return arr.map(find).join('');
 }
 
-function matchFound(text, index, match) {
-    return text[index] === match;
+function getMark(outcome) {
+  return outcome ? '🟢' : '🔴';
 }
 
-function replace(text, match, replacement) {
-    let replacedStr = '';
-    for (let index = 0; index < text.length; index++) {
-        if (matchFound(text, index, match)) {
-            replacedStr = updateString(replacedStr, replacement);
-            continue;
-        }
-        replacedStr = updateString(replacedStr, text[index]);
-    }
-    return replacedStr;
+const columnGap = function (element) {
+  return element + ' '.repeat(20 - element.length);
 }
 
-function mark(outcome) {
-    return outcome ? '✅' : '❌';
+const getLine = function (length) {
+  return '━'.repeat(length);
 }
 
-function printMessage(message) {
-    console.log(message);
+const tableHead = function (...categories) {
+  const content = '┃' + categories.map(columnGap).join('') + '┃';
+  const topLine = '┏' + getLine(content.length - 2) + '┓';
+  const bottomLine = '┣' + getLine(content.length - 2) + '┫';
+
+  return topLine + '\n' + content + '\n' + bottomLine;
 }
 
-function createHeading() {
-    let topLine = '┏';
-    for (let i = 1; i < 13 * 6; i++) {
-        if (i % 13 === 0) {
-            topLine = topLine + '┳';
-            continue;
-        }
-        topLine = topLine + '━';
-    }
-    console.log(topLine + '┓');
-    let heading = '┃  ';
-    heading += ' status ' + '  ┃  ';
-    heading += '  text  ' + '  ┃  ';
-    heading += '  match  ' + ' ┃';
-    heading += 'replacement' + ' ┃ ';
-    heading += ' expected ' + ' ┃ ';
-    heading += '  actual  ' + ' ┃';
-    console.log(heading);
-    let lineAfterHeading = '┣';
-    for (let i = 1; i < 13 * 6; i++) {
-        if (i % 13 === 0) {
-            lineAfterHeading = lineAfterHeading + '╋';
-            continue;
-        }
-        lineAfterHeading = lineAfterHeading + '━';
-    }
-    console.log(lineAfterHeading + '┫');
+const tableFoot = function (length) {
+  return '┗' + getLine(length) + '┛';
 }
 
-function createBottom() {
-    let lineAtBottom = '┗';
-    for (let i = 1; i < 13 * 6; i++) {
-        if (i % 13 === 0) {
-            lineAtBottom = lineAtBottom + '┻';
-            continue;
-        }
-        lineAtBottom = lineAtBottom + '━';
-    }
-    console.log(lineAtBottom + '┛');
-}
-function gapsForMessage(parameter) {
-    let gap = '';
-    parameter = parameter + '';
-    for (let iterator = 1; iterator < 12 - parameter.length; iterator++) {
-        gap = gap + ' ';
-    }
-    return gap;
-}
-
-function createDataForCells(text, match, replacement, expected, actual) {
-    let data = '';
-    data += '┃' + mark(actual === expected);
-    data += gapsForMessage(mark(actual === expected));
-    data += '┃ ' + text;
-    data += gapsForMessage(text);
-    data += '┃ ' + match;
-    data += gapsForMessage(match);
-    data += '┃ ' + replacement;
-    data += gapsForMessage(replacement);
-    data += '┃ ' + expected;
-    data += gapsForMessage(expected);
-    data += '┃ ' + actual;
-    data += gapsForMessage(actual);
-    data += '┃ ';
-    printMessage(data);
+function createCells(...elements) {
+  return '┃' + elements.map(columnGap).join('') + '┃';
 }
 
 function testStringReplace(text, match, replacement, expected) {
-    const actual = replace(text, match, replacement);
-    createDataForCells(text, match, replacement, expected, actual);
+  const actual = replace(text, match, replacement);
+  const mark = getMark(actual === expected);
+  console.log(createCells(mark, text, match, replacement, expected, actual));
 }
 
 function testAll() {
-    createHeading();
-    testStringReplace('a', 'a', 'b', 'b');
-    testStringReplace('b', 'b', 'b', 'b');
-    testStringReplace('a', 'b', 'c', 'a');
-    testStringReplace('aabb', 'b', 'c', 'aacc');
-    testStringReplace('aabb', 'a', 'c', 'ccbb');
-    testStringReplace('aabb', 'c', 'z', 'aabb');
-    testStringReplace('abc', 'b', 'x', 'axc');
-    testStringReplace('hello world', 'l', 'n', 'henno wornd');
-    testStringReplace('no spaces ', ' ', '_', 'no_spaces_');
-    testStringReplace('', 'd', 'e', '');
-    createBottom();
+  const head = tableHead('mark', 'text', 'match', 'replacement',
+    'expected', 'actual');
+  console.log(head);
+
+  //-----------------------------test cases-------------------------------------
+  testStringReplace('a', 'a', 'b', 'b');
+  testStringReplace('b', 'b', 'b', 'b');
+  testStringReplace('a', 'b', 'c', 'a');
+  testStringReplace('aabb', 'b', 'c', 'aacc');
+  testStringReplace('aabb', 'a', 'c', 'ccbb');
+  testStringReplace('aabb', 'c', 'z', 'aabb');
+  testStringReplace('abc', 'b', 'x', 'axc');
+  testStringReplace('hello world', 'l', 'n', 'henno wornd');
+  testStringReplace('no spaces ', ' ', '_', 'no_spaces_');
+  testStringReplace('', 'd', 'e', '');
+  //----------------------------------------------------------------------------
+  
+  console.log(tableFoot(head.length / 3 - 2));
 }
+
 testAll();
