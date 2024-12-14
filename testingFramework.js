@@ -8,33 +8,44 @@ const replace = function (text, match, replacement) {
   return arr.map(find).join('');
 }
 
+const DASH = '━';
+const BAR = '┃';
+const SPACE = ' ';
+const COLUMN_SIZE = 20;
+
 function getMark(outcome) {
   return outcome ? '🟢' : '🔴';
 }
 
-const columnGap = function (element) {
-  const category = element.toString();
-  return category + ' '.repeat(20 - category.length);
+const putContents = function (element) {
+  const content = element.toString();
+  const startingGap = Math.floor((COLUMN_SIZE - content.length) / 2);
+  const endingGap = Math.ceil((COLUMN_SIZE - content.length) / 2);
+
+  return SPACE.repeat(startingGap) + content + SPACE.repeat(endingGap) + BAR;
 }
 
 const getLine = function (length) {
-  return '━'.repeat(length);
+  return DASH.repeat(length);
 }
 
 const tableHead = function (...categories) {
-  const content = '┃' + categories.map(columnGap).join('') + '┃';
-  const topLine = '┏' + getLine(content.length - 2) + '┓';
-  const bottomLine = '┣' + getLine(content.length - 2) + '┫';
+  const content = BAR + categories.map(putContents).join('');
+  const edges = [['┏', '┓'], ['┣', '┫']];
+  const line = getLine(content.length - edges[0].length);
+
+  const topLine = edges[0][0] + line + edges[0][1];
+  const bottomLine = edges[1][0] + line + edges[1][1];
 
   return topLine + '\n' + content + '\n' + bottomLine;
 }
 
-function tableBody(...elements) {
-  return '┃' + elements.map(columnGap).join('') + '┃';
-}
-
 const tableFoot = function (length) {
   return '┗' + getLine(length) + '┛';
+}
+
+function tableBody(...elements) {
+  return BAR + elements.map(putContents).join('');
 }
 
 function testStringReplace(text, match, replacement, expected) {
