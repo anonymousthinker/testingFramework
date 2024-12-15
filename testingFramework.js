@@ -8,14 +8,26 @@ const replace = function (text, match, replacement) {
   return arr.map(find).join('');
 }
 
+//----------------------------Testing Framework---------------------------------
+
 const DASH = '━';
 const BAR = '┃';
 const SPACE = ' ';
-const EDGES = [['┏', '┓'], ['┣', '┫'], ['┗', '┛']];
+const EDGE = [['┏', '┓'], ['┣', '┫'], ['┗', '┛']];
 const COLUMN_SIZE = 20;
 
 function getMark(outcome) {
   return outcome ? '🟢' : '🔴';
+}
+
+//---------------------------testing functions----------------------------------
+
+const repeat = function (times, char) {
+  return char.repeat(times);
+}
+
+const repeatDash = function (times) {
+  return repeat(times, DASH);
 }
 
 const putContents = function (element) {
@@ -23,25 +35,31 @@ const putContents = function (element) {
   const startingGap = Math.floor((COLUMN_SIZE - content.length) / 2);
   const endingGap = Math.ceil((COLUMN_SIZE - content.length) / 2);
 
-  return SPACE.repeat(startingGap) + content + SPACE.repeat(endingGap) + BAR;
+  return repeat(startingGap, SPACE) + content + repeat(endingGap, SPACE) + BAR;
 }
 
-const getLine = function (length) {
-  return DASH.repeat(length);
+const line = function (length, interval, symbol) {
+  const arrayOfLines = new Array(interval);
+  arrayOfLines.fill(Math.floor(length / interval));
+  const line = arrayOfLines.map(repeatDash);
+
+  return line.join(symbol);
 }
 
-const tableHead = function (...categories) {
-  const content = BAR + categories.map(putContents).join('');
-  const line = getLine(content.length - EDGES[0].length);
+const tableHead = function (headings) {
+  const content = BAR + headings.map(putContents).join('');
+  const size = content.length - EDGE[0].length;
+  const joinAt = headings.length;
 
-  const topLine = EDGES[0][0] + line + EDGES[0][1];
-  const bottomLine = EDGES[1][0] + line + EDGES[1][1];
+  const topLine = EDGE[0][0] + line(size, joinAt, "┳") + EDGE[0][1];
+  const botLine = EDGE[1][0] + line(size, joinAt, "╋") + EDGE[1][1];
 
-  return topLine + '\n' + content + '\n' + bottomLine;
+  return topLine + '\n' + content + '\n' + botLine;
 }
 
-const tableFoot = function (length) {
-  return EDGES[2][0] + getLine(length) + EDGES[2][1];
+const tableFoot = function (length, joinAt) {
+  const size = length - EDGE[0].length;
+  return EDGE[2][0] + line(size, joinAt, "┻") + EDGE[2][1];
 }
 
 function tableBody(...tableData) {
@@ -55,8 +73,9 @@ function testStringReplace(text, match, replacement, expected) {
 }
 
 function testAll() {
-  const head = tableHead('mark', 'text', 'match', 'replacement',
-    'expected', 'actual');
+  const categories = ['mark', 'text', 'match', 'replacement',
+    'expected', 'actual'];
+  const head = tableHead(categories);
   console.log(head);
 
   //-----------------------------test cases-------------------------------------
@@ -71,8 +90,8 @@ function testAll() {
   testStringReplace('no spaces ', ' ', '_', 'no_spaces_');
   testStringReplace('', 'd', 'e', '');
   //----------------------------------------------------------------------------
-  
-  console.log(tableFoot(head.length / 3 - EDGES[2].length));
+
+  console.log(tableFoot(Math.floor(head.length / 3), categories.length));
 }
 
 testAll();
