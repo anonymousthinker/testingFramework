@@ -44,8 +44,8 @@ const tableFoot = function (length) {
   return EDGES[2][0] + getLine(length) + EDGES[2][1];
 }
 
-function tableBody(...elements) {
-  return BAR + elements.map(putContents).join('');
+function tableBody(...tableData) {
+  return BAR + tableData.map(putContents).join('');
 }
 
 function testStringReplace(text, match, replacement, expected) {
@@ -72,7 +72,7 @@ function testAll() {
   testStringReplace('', 'd', 'e', '');
   //----------------------------------------------------------------------------
   
-  console.log(tableFoot(head.length / 3 - 2));
+  console.log(tableFoot(head.length / 3 - EDGES[2].length));
 }
 
 testAll();
