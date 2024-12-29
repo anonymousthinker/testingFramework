@@ -2,7 +2,14 @@
 //string check-d
 //boolean check-d
 //array check-d
-//object check
+//object check-d
+
+const areObjectsEqual = (valueOne, valueTwo) => {
+  return areArraysEqual(
+    Object.entries(valueOne).sort(),
+    Object.entries(valueTwo).sort()
+  );
+};
 
 const areArraysEqual = (valueOne, valueTwo) => {
   if (valueOne.length !== valueTwo.length) {
@@ -15,6 +22,10 @@ const areArraysEqual = (valueOne, valueTwo) => {
 const areEqual = (valueOne, valueTwo) => {
   if (Array.isArray(valueOne) || Array.isArray(valueTwo)) {
     return areArraysEqual(valueOne, valueTwo);
+  }
+
+  if (typeof valueOne === "object") {
+    return areObjectsEqual(valueOne, valueTwo);
   }
 
   return valueOne === valueTwo;
@@ -71,6 +82,20 @@ const testCases = () => {
     true,
     table
   );
+
+  test("object test", {}, {}, true, table);
+  test("object test", { 1: 2 }, { 3: 4 }, false, table);
+  test("object test", { a: [] }, { a: [] }, true, table);
+  test("object test", { a: { b: {} } }, { a: { b: {} } }, true, table);
+  test(
+    "object test",
+    { person1: ["gour", 20] },
+    { person1: ["gour", 20] },
+    true,
+    table
+  );
+  test("object test", {}, [], false, table);
+  test("object test", [], {}, false, table);
 
   console.table(table);
 };
