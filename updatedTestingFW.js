@@ -11,6 +11,20 @@ const areObjectsEqual = (valueOne, valueTwo) => {
   );
 };
 
+const _areObjectsEqual = (valueOne, valueTwo) => {
+  const keys = Object.keys(valueOne);
+
+  if (!keys.every((key) => key in valueTwo)) {
+    return false;
+  }
+
+  if (!keys.every((key) => areEqual(valueOne[key], valueTwo[key]))) {
+    return false;
+  }
+
+  return true;
+};
+
 const areArraysEqual = (valueOne, valueTwo) => {
   if (valueOne.length !== valueTwo.length) {
     return false;
@@ -25,7 +39,7 @@ const areEqual = (valueOne, valueTwo) => {
   }
 
   if (typeof valueOne === "object") {
-    return areObjectsEqual(valueOne, valueTwo);
+    return _areObjectsEqual(valueOne, valueTwo);
   }
 
   return valueOne === valueTwo;
